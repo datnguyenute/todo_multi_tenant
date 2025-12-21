@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:14.20-alpine3.23
+    container_name: nest_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: todouser
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: todo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
