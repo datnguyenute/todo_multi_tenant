@@ -48,6 +48,7 @@ model User {
   projectMembers ProjectMember[]
   tasks          Task[]          @relation("TaskAssignee")
   comments       Comment[]
+  refreshTokens  RefreshToken[]
 }
 
 model Workspace {
@@ -140,4 +141,17 @@ model Comment {
 
   task   Task @relation(fields: [taskId], references: [id])
   author User @relation(fields: [createdBy], references: [id])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String
+  userId    String
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
