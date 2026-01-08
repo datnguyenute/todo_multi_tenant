@@ -13,6 +13,7 @@ export class UsersService {
   ) {}
 
   async register(registerUserDto: RegisterUserDto) {
+    console.log('> register');
     const { name, email, password } = registerUserDto;
 
     const isExist = await this.userRepo.findOne({ where: { email } });

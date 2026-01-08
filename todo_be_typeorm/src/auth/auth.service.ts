@@ -1,16 +1,10 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import * as argon2 from 'argon2';
-import { randomUUID } from 'crypto';
 import { UsersService } from 'src/users/users.service';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { IsNull, Repository } from 'typeorm';
-import { addDays } from 'date-fns';
 import { ConfigService } from '@nestjs/config';
-import { StringValue } from 'ms';
+import ms, { StringValue } from 'ms';
 import { IUser } from 'src/users/users.interface';
-import { User } from 'src/users/entities/user.entity';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -18,11 +12,10 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    @InjectRepository(RefreshToken)
-    private readonly refreshTokenRepo: Repository<RefreshToken>,
   ) {}
 
   async validateUser(email: string, password: string) {
+    console.log('> validateUser')
     const user = await this.usersService.findByEmail(email);
     if (user) {
       const isValidPassword = await this.usersService.verifyPassword(password, user.password);
@@ -35,7 +28,8 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
+  async login(user: IUser, response: Response) {
+    console.log('> Login');
     const { id, email, name } = user;
     const payload = {
       sub: 'token login',
@@ -51,16 +45,24 @@ export class AuthService {
 
     await this.usersService.updateUserToken(refreshToken, id);
 
-    // TODO: Set to cookie
+    // Set to cookie
+    response.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      maxAge: ms(this.configService.get<StringValue>('JWT_REFRESH_TOKEN_EXPIRE')!),
+    });
 
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
-      user,
+      user: {
+        id,
+        name,
+        email,
+      },
     };
   }
 
-  async processNewRefreshToken(refreshToken: string) {
+  async processNewRefreshToken(refreshToken: string, response: Response) {
     try {
       this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
@@ -81,7 +83,13 @@ export class AuthService {
 
         const refreshToken = this.createRefreshToken(payload);
         await this.usersService.updateUserToken(refreshToken, id);
-        // TODO: Set to cookie
+
+        // Set to cookie
+        response.clearCookie('refresh_token');
+        response.cookie('refresh_token', refreshToken, {
+          httpOnly: true,
+          maxAge: ms(this.configService.get<StringValue>('JWT_REFRESH_TOKEN_EXPIRE')!),
+        });
 
         return {
           access_token: accessToken,
@@ -100,9 +108,9 @@ export class AuthService {
     }
   }
 
-  logout = async (user: User) => {
+  logout = async (response: Response, user: IUser) => {
     await this.usersService.updateUserToken('', user.id);
-    // TODO: Clear token cookie
+    response.clearCookie('refresh_token');
     return { success: true };
   };
 

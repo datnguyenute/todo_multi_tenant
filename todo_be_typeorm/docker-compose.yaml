@@ -1,18 +1,16 @@
 services:
   postgres:
     image: postgres:14.20-alpine3.23
-    container_name: nest_postgres
+    container_name: todo_container
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: todouser
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: todo_db
+      POSTGRES_DB: teamtodo
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
-
-  # docker compose up -d
