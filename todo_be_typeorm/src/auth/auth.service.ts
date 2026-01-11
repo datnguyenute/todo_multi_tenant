@@ -49,6 +49,11 @@ export class AuthService {
     await this.usersService.updateUserToken(refreshToken, id);
 
     // Set to cookie
+    response.cookie('access_token', accessToken, {
+      httpOnly: true,
+      maxAge: ms(this.configService.get<StringValue>('JWT_ACCESS_TOKEN_EXPIRE')!),
+    });
+
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       maxAge: ms(this.configService.get<StringValue>('JWT_REFRESH_TOKEN_EXPIRE')!),
@@ -90,7 +95,13 @@ export class AuthService {
         await this.usersService.updateUserToken(refreshToken, id);
 
         // Set to cookie
+        response.clearCookie('access_token');
         response.clearCookie('refresh_token');
+        response.cookie('access_token', accessToken, {
+          httpOnly: true,
+          maxAge: ms(this.configService.get<StringValue>('JWT_ACCESS_TOKEN_EXPIRE')!),
+        });
+
         response.cookie('refresh_token', refreshToken, {
           httpOnly: true,
           maxAge: ms(this.configService.get<StringValue>('JWT_REFRESH_TOKEN_EXPIRE')!),

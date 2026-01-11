@@ -40,7 +40,7 @@ function LoginPage() {
       </form>
 
       <div className="text-center text-sm space-y-2">
-        <a href="/auth/forgot-password" className="text-secondary hover:underline block">
+        <a href="/auth/forgot-password" className="text-primary hover:underline block">
           Quên mật khẩu?
         </a>
         <a href="/auth/register" className="text-muted-foreground hover:underline block">

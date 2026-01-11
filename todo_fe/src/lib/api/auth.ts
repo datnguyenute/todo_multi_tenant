@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { http } from "./http";
 
 export const authApi = {
-  login: (data: { username: string; password: string }) =>
+  login: (data: { username: string; password: string }): any =>
     http("/auth/login", {
       method: "POST",
       body: JSON.stringify(data),
@@ -12,4 +13,6 @@ export const authApi = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  me: (token: string| null) => http("/auth/account", {token}),
 };

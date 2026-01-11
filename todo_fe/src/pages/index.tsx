@@ -1,3 +1,12 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+
 export default function Home() {
-  return <div>Home page</div>;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/workspaces");
+  }, [router]);
+
+  return null;
 }
