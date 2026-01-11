@@ -1,0 +1,15 @@
+import { http } from "./http";
+
+export const authApi = {
+  login: (data: { username: string; password: string }) =>
+    http("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  register: (data: { name: string; email: string; password: string }) =>
+    http("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};
