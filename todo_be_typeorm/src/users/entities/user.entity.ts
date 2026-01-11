@@ -11,7 +11,10 @@ export class User {
   @Column()
   name: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
+  type: string;
+
+  @Column({ nullable: true })
   refreshToken: string;
 
   @Column()

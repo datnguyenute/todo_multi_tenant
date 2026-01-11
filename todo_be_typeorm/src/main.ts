@@ -15,10 +15,10 @@ async function bootstrap() {
     }),
   );
 
-  // const reflector = app.get(Reflector);
+  const reflector = app.get(Reflector);
 
   // All routes using JWT
-  // app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   // cookies
   app.use(cookieParser());

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
+import { CreateUserDto, CreateUserSocialDto, RegisterUserDto } from './dto/create-user.dto';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -26,6 +26,17 @@ export class UsersService {
       email: email,
       name: name,
       password: passwordHash,
+    });
+    return this.userRepo.save(createdUser);
+  }
+
+  async createUserSocial(createUserSocialDto: CreateUserSocialDto) {
+    const { name, email, type } = createUserSocialDto;
+
+    const createdUser = this.userRepo.create({
+      email: email,
+      name: name,
+      type: type,
     });
     return this.userRepo.save(createdUser);
   }

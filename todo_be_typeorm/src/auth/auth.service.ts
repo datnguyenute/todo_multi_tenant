@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
 import { IUser } from 'src/users/users.interface';
 import { Response } from 'express';
+import { CreateUserSocialDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,10 +16,11 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    console.log('> validateUser')
+    console.log('> validateUser');
     const user = await this.usersService.findByEmail(email);
+    console.log(user);
     if (user) {
-      const isValidPassword = await this.usersService.verifyPassword(password, user.password);
+      const isValidPassword = await this.usersService.verifyPassword(user.password, password);
 
       if (isValidPassword) {
         return user;
@@ -30,13 +32,14 @@ export class AuthService {
 
   async login(user: IUser, response: Response) {
     console.log('> Login');
-    const { id, email, name } = user;
+    const { id, email, name, type } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
       id,
       name,
       email,
+      type,
     };
 
     const accessToken = this.createAccessToken(payload);
@@ -58,6 +61,7 @@ export class AuthService {
         id,
         name,
         email,
+        type,
       },
     };
   }
@@ -71,13 +75,14 @@ export class AuthService {
       // rotate
       const user = await this.usersService.findUserByToken(refreshToken);
       if (user) {
-        const { id, email, name } = user;
+        const { id, email, name, type } = user;
         const payload = {
           sub: 'token login',
           iss: 'from server',
           id,
           name,
           email,
+          type,
         };
         const accessToken = this.createAccessToken(payload);
 
@@ -98,6 +103,7 @@ export class AuthService {
             id,
             name,
             email,
+            type,
           },
         };
       } else {
@@ -126,5 +132,51 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: this.configService.get<StringValue>('JWT_ACCESS_TOKEN_EXPIRE'),
     });
+  };
+
+  // Social login
+  loginSocial = async (loginSocial: CreateUserSocialDto, response: Response) => {
+    const { type: typeSocial, email: emailSocial } = loginSocial;
+    let user = await this.usersService.findByEmail(emailSocial);
+
+    if (user) {
+      const typeExisted = user.type;
+      if (typeExisted != typeSocial) {
+        throw new BadRequestException(`Email ${emailSocial} has exited. Please use another email.`);
+      }
+    } else {
+      user = await this.usersService.createUserSocial(loginSocial);
+    }
+
+    const { email, name, type, id } = user;
+
+    const payload = {
+      sub: 'token login',
+      iss: 'from server',
+      id,
+      name,
+      email,
+      type,
+    };
+
+    const accessToken = this.createAccessToken(payload);
+    const refreshToken = this.createRefreshToken(payload);
+    await this.usersService.updateUserToken(refreshToken, id);
+
+    response.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      maxAge: ms(this.configService.get<StringValue>('JWT_REFRESH_TOKEN_EXPIRE')!),
+    });
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      user: {
+        id,
+        name,
+        email,
+        type,
+      },
+    };
   };
 }

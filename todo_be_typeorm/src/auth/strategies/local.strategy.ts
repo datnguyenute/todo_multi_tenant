@@ -8,16 +8,15 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private auth: AuthService) {
     console.log('>> hello from LocalStrategy');
     super({
-      usernameField: 'email', // 🔥
+      usernameField: 'username', // 🔥 https://www.passportjs.org/api/passport-local/1.x/strategy/
       passwordField: 'password',
     });
   }
 
   validate = async (email: string, password: string) => {
-    console.log('> validate LocalStrategy');
     const user = await this.auth.validateUser(email, password);
     if (!user) {
-      throw new UnauthorizedException('Email/Password is not valid.');
+      throw new UnauthorizedException('Username/Password is not valid.');
     }
     return user;
   };
