@@ -6,7 +6,6 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public, User } from 'src/decorator/customize';
 import type { Response, Request } from 'express';
 import type { IUser } from 'src/users/users.interface';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
