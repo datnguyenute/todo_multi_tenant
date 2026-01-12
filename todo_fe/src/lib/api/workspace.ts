@@ -1,5 +1,5 @@
 import { http } from "./http";
 
 export const workspaceApi = {
-  list: () => http("/workspaces"),
+  list: (token: string | null) => http("/workspaces", { token }),
 };

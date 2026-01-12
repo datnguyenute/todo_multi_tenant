@@ -14,5 +14,7 @@ export const authApi = {
       body: JSON.stringify(data),
     }),
 
-  me: (token: string| null) => http("/auth/account", {token}),
+  me: (token: string | null) => {
+    return http("/auth/account", { token });
+  },
 };

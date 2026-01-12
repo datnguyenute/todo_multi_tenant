@@ -3,9 +3,9 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect } from "react";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function withAuth(Page: any) {
-  return function ProtectedPage(props: any) {
-    const {user, loading} = useAuth();
+function withAuth(Page: any) {
+  const ProtectedPage = (props: any) => {
+    const { user, loading } = useAuth();
 
     const router = useRouter();
 
@@ -15,10 +15,15 @@ export function withAuth(Page: any) {
       }
     }, [loading, user, router]);
 
-    if (loading || !user) return null;
+    if (loading) return <div>Loading...</div>;
+    if (!user) return null;
 
-    return <Page {...props}></Page>
-  }
+    return <Page {...props}></Page>;
+  };
+
+  ProtectedPage.getLayout = Page.getLayout;
+
+  return ProtectedPage;
 }
 
 export default withAuth;

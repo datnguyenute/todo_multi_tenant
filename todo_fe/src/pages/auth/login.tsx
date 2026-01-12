@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/lib/hooks/useLogin";
+import Link from "next/link";
 
 function LoginPage() {
   const { submit, loading, error } = useLogin();
@@ -40,12 +41,12 @@ function LoginPage() {
       </form>
 
       <div className="text-center text-sm space-y-2">
-        <a href="/auth/forgot-password" className="text-primary hover:underline block">
+        <Link href="/auth/forgot-password" className="text-primary hover:underline block">
           Quên mật khẩu?
-        </a>
-        <a href="/auth/register" className="text-muted-foreground hover:underline block">
+        </Link>
+        <Link href="/auth/register" className="text-muted-foreground hover:underline block">
           Chưa có tài khoản? Đăng ký
-        </a>
+        </Link>
       </div>
     </div>
   );

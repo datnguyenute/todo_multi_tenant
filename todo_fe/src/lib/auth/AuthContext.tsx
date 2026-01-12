@@ -15,10 +15,17 @@ export const useAuthToken = () => {
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("access_token");
+  });
 
   useEffect(() => {
-    console.log("AUTH CONTEXT TOKEN:", accessToken);
+    if (accessToken) {
+      localStorage.setItem("access_token", accessToken);
+    } else {
+      localStorage.removeItem("access_token");
+    }
   }, [accessToken]);
 
   return <AuthContext.Provider value={{ accessToken, setAccessToken }}>{children}</AuthContext.Provider>;

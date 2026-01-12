@@ -7,7 +7,7 @@ export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const authToken = useAuthToken();
+  const { setAccessToken } = useAuthToken();
 
   const submit = async (email: string, password: string) => {
     setLoading(true);
@@ -15,10 +15,10 @@ export function useLogin() {
 
     try {
       const res = await authApi.login({ username: email, password });
-      console.log("LOGIN RES:", res)
-      authToken.setAccessToken(res?.access_token);
+      console.log("LOGIN RES:", res);
+      setAccessToken(res?.access_token);
       // Redirect to Home
-      router.push("/workspaces");
+      router.push("/");
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

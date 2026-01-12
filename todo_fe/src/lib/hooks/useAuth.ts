@@ -9,18 +9,30 @@ export function useAuth() {
   const { accessToken } = useAuthToken();
 
   useEffect(() => {
-    console.log('> useAuth accessToken: ', accessToken);
-    // if (!accessToken) {
-    //   setLoading(false);
-    //   return;
-    // }
+    let cancelled = false;
 
-    authApi
-      .me(accessToken)
-      .then(setUser)
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    async function fetchMe() {
+      if (!accessToken) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const me = await authApi.me(accessToken);
+        if (!cancelled) setUser(me);
+      } catch {
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchMe();
+
+    return () => {
+      cancelled = true;
+    };
   }, [accessToken]);
-
   return { user, loading };
 }
