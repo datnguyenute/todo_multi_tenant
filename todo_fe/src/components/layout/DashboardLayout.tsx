@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import Sidebar from "../navigation/Sidebar";
 
-const DashboardLayout = ({ children }: { children: ReactNode }) => {
+const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -9,5 +9,4 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
-
 export default DashboardLayout;

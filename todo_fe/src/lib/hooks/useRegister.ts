@@ -1,28 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { authApi } from "../api/auth";
+import { useRouter } from "next/router";
+import { sendRequest } from "../api/http";
 
 export function useRegister() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const submit = async (name: string, email: string, password: string, ) => {
+  const submit = async (name: string, email: string, password: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      await authApi.register({name, email, password});
-      // Redirect to Home
-      window.location.href = "/auth/login";
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      const response = await sendRequest<IBackendRes<any>>({
+        url: `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        method: "POST",
+        body: { name, email, password },
+      });
+
+      if (response && response.data) {
+        // Redirect to Login
+        router.replace("/auth/login");
       } else {
-        setError("Register failed!");
+        setError(response.message);
       }
+    } catch {
+      setError("Register failed!");
     } finally {
       setLoading(false);
     }
   };
 
-  return {submit, loading, error};
+  return { submit, loading, error };
 }

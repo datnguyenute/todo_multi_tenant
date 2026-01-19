@@ -25,12 +25,12 @@ function LoginPage() {
       >
         <div className="space-y-2">
           <Label>Email</Label>
-          <Input name="email" type="email" placeholder="email@example.com" required/>
+          <Input name="email" type="email" placeholder="email@example.com" required />
         </div>
 
         <div className="space-y-2">
           <Label>Mật khẩu</Label>
-          <Input name="password" type="password" required/>
+          <Input name="password" type="password" required />
         </div>
 
         {error && <p className="text-sm text-destructive">{error}</p>}

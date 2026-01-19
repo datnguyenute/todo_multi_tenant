@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { workspaceApi } from "@/lib/api/workspace";
-import { useAuthToken } from "@/lib/auth/AuthContext";
-import withAuth from "@/lib/hoc/withAuth";
+import { useWorkspaceApi } from "@/lib/api/workspace";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 function WorkspacesPage() {
+  const { data } = useSession();
   const [workspaces, setWorkspaces] = useState([]);
-  const { accessToken } = useAuthToken();
+  const { list } = useWorkspaceApi();
 
   useEffect(() => {
-    workspaceApi.list(accessToken).then((value: any) => setWorkspaces(value));
+    console.log('Data from use Session client: ', data);
+    list().then((value: any) => setWorkspaces(value));
   }, []);
 
   return (
@@ -31,5 +32,6 @@ function WorkspacesPage() {
 }
 
 WorkspacesPage.getLayout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>;
+WorkspacesPage.requireAuth = true;
 
-export default withAuth(WorkspacesPage);
+export default WorkspacesPage;

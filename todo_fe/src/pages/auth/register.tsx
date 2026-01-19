@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/lib/hooks/useRegister";
+import Link from "next/link";
 
 function RegisterPage() {
   const { submit, loading, error } = useRegister();
@@ -44,9 +45,9 @@ function RegisterPage() {
       </form>
 
       <div className="text-center text-sm space-y-2">
-        <a href="/auth/login" className="text-muted-foreground hover:underline block">
+        <Link href="/auth/login" className="text-muted-foreground hover:underline block">
           Đã có tài khoản? Đăng nhập
-        </a>
+        </Link>
       </div>
     </div>
   );

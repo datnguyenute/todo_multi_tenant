@@ -1,20 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { http } from "./http";
+import { useHttp } from "@/lib/api/http";
 
-export const authApi = {
-  login: (data: { username: string; password: string }): any =>
-    http("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-
-  register: (data: { name: string; email: string; password: string }) =>
-    http("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-
-  me: (token: string | null) => {
-    return http("/auth/account", { token });
-  },
+type LoginPayload = {
+  username: string;
+  password: string;
 };
+
+type RegisterPayload = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export function useAuthApi() {
+  const { request } = useHttp();
+
+  return {
+    login: (data: LoginPayload) =>
+      request<{
+        access_token: string;
+      }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      }),
+
+    register: (data: RegisterPayload) =>
+      request("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      }),
+
+    me: () => request("/auth/account"),
+
+    refresh: () =>
+      request<{ access_token: string }>("/auth/refresh", {
+        method: "POST",
+      }),
+  };
+}

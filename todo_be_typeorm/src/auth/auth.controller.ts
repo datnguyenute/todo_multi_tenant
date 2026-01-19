@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserSocialDto, RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { Public, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import type { Response, Request } from 'express';
 import type { IUser } from 'src/users/users.interface';
 
@@ -16,6 +16,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
+  @ResponseMessage('User register')
   async register(@Body() dto: RegisterUserDto) {
     return this.usersService.register(dto);
   }
@@ -23,6 +24,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ResponseMessage('User Login')
   async login(@Req() req, @Res({ passthrough: true }) response: Response) {
     return this.authService.login(req.user, response);
   }
@@ -40,6 +42,7 @@ export class AuthController {
 
   @Public()
   @Get('refresh')
+  @ResponseMessage('Get User by refresh token')
   handleRefreshToken(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const refreshToken = request.cookies['refresh_token'];
     return this.authService.processNewRefreshToken(refreshToken, response);

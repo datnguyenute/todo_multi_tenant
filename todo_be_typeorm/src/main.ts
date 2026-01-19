@@ -4,21 +4,23 @@ import { ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
+import { TransformInterceptor } from './auth/core/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
   );
 
   const reflector = app.get(Reflector);
-
   // All routes using JWT
   app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // Transform response
+  app.useGlobalInterceptors(new TransformInterceptor(reflector));
+
 
   // cookies
   app.use(cookieParser());
