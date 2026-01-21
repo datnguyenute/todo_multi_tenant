@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateUserSocialDto, RegisterUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserSocialDto, RefreshTokenDto, RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import type { Response, Request } from 'express';
@@ -41,11 +41,10 @@ export class AuthController {
   }
 
   @Public()
-  @Get('refresh')
+  @Post('refresh')
   @ResponseMessage('Get User by refresh token')
-  handleRefreshToken(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
-    const refreshToken = request.cookies['refresh_token'];
-    return this.authService.processNewRefreshToken(refreshToken, response);
+  handleRefreshToken(@Body() refreshTokenDto: RefreshTokenDto, @Res({ passthrough: true }) response: Response) {
+    return this.authService.processNewRefreshToken(refreshTokenDto, response);
   }
 
   @Post('logout')

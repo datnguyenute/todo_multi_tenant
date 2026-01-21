@@ -1,7 +1,6 @@
 import NextAuthWrapper from "@/components/next.auth.wrapper";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/lib/auth/AuthContext";
-import AuthGate from "@/lib/hoc/AuthGate";
 import "@/styles/globals.css";
 import { NextPage } from "next";
 import type { AppProps } from "next/app";

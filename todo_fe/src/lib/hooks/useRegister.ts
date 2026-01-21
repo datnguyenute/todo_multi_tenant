@@ -14,7 +14,7 @@ export function useRegister() {
 
     try {
       const response = await sendRequest<IBackendRes<any>>({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        url: "/auth/register",
         method: "POST",
         body: { name, email, password },
       });

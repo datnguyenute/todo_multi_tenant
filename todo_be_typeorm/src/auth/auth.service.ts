@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import ms, { StringValue } from 'ms';
 import { IUser } from 'src/users/users.interface';
 import { Response } from 'express';
-import { CreateUserSocialDto } from 'src/users/dto/create-user.dto';
+import { CreateUserSocialDto, RefreshTokenDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -71,8 +71,10 @@ export class AuthService {
     };
   }
 
-  async processNewRefreshToken(refreshToken: string, response: Response) {
+  async processNewRefreshToken(refreshTokenDto: RefreshTokenDto, response: Response) {
     try {
+      const { refresh_token: refreshToken } = refreshTokenDto;
+
       this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
@@ -82,7 +84,7 @@ export class AuthService {
       if (user) {
         const { id, email, name, type } = user;
         const payload = {
-          sub: 'token login',
+          sub: 'token refresh',
           iss: 'from server',
           id,
           name,
@@ -162,7 +164,7 @@ export class AuthService {
     const { email, name, type, id } = user;
 
     const payload = {
-      sub: 'token login',
+      sub: 'token login social',
       iss: 'from server',
       id,
       name,

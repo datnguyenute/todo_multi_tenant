@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
-// import { useAuth } from "../auth/AuthContext";
 
 export function useLogin() {
   const [loading, setLoading] = useState(false);

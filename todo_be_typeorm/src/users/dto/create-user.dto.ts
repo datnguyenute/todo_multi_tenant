@@ -36,3 +36,8 @@ export class CreateUserSocialDto {
   @IsNotEmpty()
   type: string;
 }
+
+export class RefreshTokenDto {
+  @IsNotEmpty()
+  refresh_token: string;
+}

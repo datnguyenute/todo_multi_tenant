@@ -19,4 +19,9 @@ declare global {
     statusCode: number | string;
     data?: T;
   }
+
+  interface IWorkspace {
+    id: string;
+    name: string;
+  }
 }

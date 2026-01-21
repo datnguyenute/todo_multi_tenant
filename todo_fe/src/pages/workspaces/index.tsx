@@ -2,17 +2,21 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useWorkspaceApi } from "@/lib/api/workspace";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 
 function WorkspacesPage() {
-  const { data } = useSession();
-  const [workspaces, setWorkspaces] = useState([]);
+  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
   const { list } = useWorkspaceApi();
 
   useEffect(() => {
-    console.log('Data from use Session client: ', data);
-    list().then((value: any) => setWorkspaces(value));
-  }, []);
+    const fetchData = async () => {
+      const response = await list();
+
+      if (response.data) {
+        setWorkspaces(response.data || []);
+      }
+    };
+    fetchData();
+  }, [list]);
 
   return (
     <div className="space-y-6">

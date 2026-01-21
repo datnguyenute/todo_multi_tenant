@@ -1,41 +1,18 @@
-import { useHttp } from "@/lib/api/http";
-
-type LoginPayload = {
-  username: string;
-  password: string;
-};
-
-type RegisterPayload = {
-  name: string;
-  email: string;
-  password: string;
-};
+import { useSession } from "next-auth/react";
+import { sendRequest } from "./http";
 
 export function useAuthApi() {
-  const { request } = useHttp();
+  const { data: session } = useSession();
 
   return {
-    login: (data: LoginPayload) =>
-      request<{
-        access_token: string;
-      }>("/auth/login", {
+    logout: () => {
+      return sendRequest<IBackendRes<IWorkspace[]>>({
         method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      }),
-
-    register: (data: RegisterPayload) =>
-      request("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      }),
-
-    me: () => request("/auth/account"),
-
-    refresh: () =>
-      request<{ access_token: string }>("/auth/refresh", {
-        method: "POST",
-      }),
+        url: "/auth/logout",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+    }
   };
 }

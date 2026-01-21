@@ -1,12 +1,24 @@
 import { PropsWithChildren } from "react";
-import Sidebar from "../navigation/Sidebar";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
+import { AppSidebar } from "../navigation/AppSidebar";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  if (session?.error === "RefreshAccessTokenError") {
+    router.replace("/auth/login");
+  }
+
   return (
-    <div className="min-h-screen flex">
-      <Sidebar />
-      <div className="flex-1 bg-muted/60 p-6">{children}</div>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        {children}
+      </main>
+    </SidebarProvider>
   );
 };
 export default DashboardLayout;
