@@ -1,8 +1,9 @@
 import { PropsWithChildren } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
+import { SidebarInset, SidebarProvider } from "../ui/sidebar";
 import { AppSidebar } from "../navigation/AppSidebar";
+import { SiteHeader } from "../navigation/SideHeader";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   const { data: session } = useSession();
@@ -14,10 +15,11 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <main>
-        {children}
-      </main>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <main>{children}</main>
+      </SidebarInset>
     </SidebarProvider>
   );
 };

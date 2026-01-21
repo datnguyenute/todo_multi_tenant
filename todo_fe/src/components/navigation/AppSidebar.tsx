@@ -15,6 +15,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { signOut, useSession } from "next-auth/react";
 import { useAuthApi } from "@/lib/api/auth";
 
+// const data = [
+//   user: {
+//     name: "shadcn",
+//     email: "m@example.com",
+//     avatar: "/avatars/shadcn.jpg",
+//   },
+// ]
 const items = [
   {
     title: "Workspace",
@@ -43,20 +50,20 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+interface IAppsidebarProps {
+  variant: "sidebar" | "floating" | "inset";
+}
+
+export function AppSidebar({ variant }: IAppsidebarProps) {
   const { data: session } = useSession();
   const { logout } = useAuthApi();
-  const { open } = useSidebar();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" variant={variant}>
       <SidebarHeader className="flex flex-row justify-between">
-        {open && (
-          <Link href="/workspaces">
-            <ListTodo />
-          </Link>
-        )}
-        <SidebarTrigger />
+        <Link href="/workspaces">
+          <ListTodo />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
