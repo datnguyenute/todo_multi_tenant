@@ -13,6 +13,16 @@ export function useWorkspaceApi() {
           Authorization: `Bearer ${session?.access_token}`,
         },
       });
-    }
+    },
+    create: (name: string) => {
+      return sendRequest<IBackendRes<IWorkspace>>({
+        method: "POST",
+        url: "/workspaces",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: { name, ownerId: session?.user.id },
+      });
+    },
   };
 }

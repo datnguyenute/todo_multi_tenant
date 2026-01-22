@@ -3,52 +3,53 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { LayoutList, Boxes, Folders, Users, Settings, ListTodo, User2, ChevronUp, UserPen, LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { useAuthApi } from "@/lib/api/auth";
 
-// const data = [
-//   user: {
-//     name: "shadcn",
-//     email: "m@example.com",
-//     avatar: "/avatars/shadcn.jpg",
-//   },
-// ]
-const items = [
-  {
-    title: "Workspace",
-    url: "/workspaces",
-    icon: Boxes,
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
-  {
-    title: "Projects",
-    url: "/projects",
-    icon: Folders,
-  },
-  {
-    title: "Tasks",
-    url: "#",
-    icon: LayoutList,
-  },
-  {
-    title: "Users",
-    url: "#",
-    icon: Users,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
+  navMain: [
+    {
+      title: "Workspace",
+      url: "/workspaces",
+      icon: Boxes,
+    },
+    {
+      title: "Projects",
+      url: "/projects",
+      icon: Folders,
+    },
+    {
+      title: "Tasks",
+      url: "#",
+      icon: LayoutList,
+    },
+    {
+      title: "Users",
+      url: "#",
+      icon: Users,
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings,
+    },
+  ],
+};
 
 interface IAppsidebarProps {
   variant: "sidebar" | "floating" | "inset";
@@ -60,24 +61,36 @@ export function AppSidebar({ variant }: IAppsidebarProps) {
 
   return (
     <Sidebar collapsible="icon" variant={variant}>
-      <SidebarHeader className="flex flex-row justify-between">
-        <Link href="/workspaces">
-          <ListTodo />
-        </Link>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
+              <Link href="/workspaces">
+                <ListTodo className="size-5!" />
+                <span className="text-base font-semibold">TODO</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <Link href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarGroupLabel>Home</SidebarGroupLabel>
+            <SidebarMenu>
+              {data.navMain.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
