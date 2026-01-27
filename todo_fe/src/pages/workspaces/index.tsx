@@ -35,7 +35,7 @@ function WorkspacesPage() {
   );
 }
 
-WorkspacesPage.getLayout = (page: React.ReactNode) => <DashboardLayout>{page}</DashboardLayout>;
+WorkspacesPage.getLayout = (page: React.ReactNode) => <DashboardLayout pageName="Workspaces">{page}</DashboardLayout>;
 WorkspacesPage.requireAuth = true;
 
 export default WorkspacesPage;

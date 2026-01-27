@@ -26,4 +26,5 @@ interface IUser {
   name: string;
   email: string;
   type?: string;
+  updatedAt?: string;
 }

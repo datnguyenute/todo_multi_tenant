@@ -24,7 +24,6 @@ export class RegisterUserDto {
   name: string;
 }
 
-
 export class CreateUserSocialDto {
   @IsEmail()
   @IsNotEmpty()
@@ -40,4 +39,16 @@ export class CreateUserSocialDto {
 export class RefreshTokenDto {
   @IsNotEmpty()
   refresh_token: string;
+}
+
+export class UpdateUserDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+
+  @IsNotEmpty()
+  name: string;
 }

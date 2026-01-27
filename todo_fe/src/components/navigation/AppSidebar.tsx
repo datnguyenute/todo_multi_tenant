@@ -40,7 +40,7 @@ const data = {
     },
     {
       title: "Users",
-      url: "#",
+      url: "/users",
       icon: Users,
     },
     {

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { useWorkspace } from "@/lib/hooks/useWorkspace";
 import { CirclePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -62,7 +62,7 @@ export function WorkspaceCreate() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-150">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>

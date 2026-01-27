@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto, CreateUserSocialDto, RegisterUserDto } from './dto/create-user.dto';
+import { CreateUserDto, CreateUserSocialDto, RegisterUserDto, UpdateUserDto } from './dto/create-user.dto';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -49,12 +49,43 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { email: email } });
   };
 
-  findById = async (id: number) => {
+  findById = async (id: string) => {
     return await this.userRepo.findOne({ where: { id: id } });
   };
 
-  create(data: CreateUserDto) {
-    const user = this.userRepo.create(data);
+  findAll = async () => {
+    return await this.userRepo.find();
+  };
+
+  async create(createUserDto: CreateUserDto) {
+    const { name, email, password } = createUserDto;
+    const isExist = await this.userRepo.findOne({ where: { email: email } });
+    if (isExist) {
+      throw new BadRequestException(`Email: ${email} đã tồn tại trên hệ thống. Vui lòng sử dụng email khác.`);
+    }
+
+    const passwordHash = await this.hashPassword(password);
+    const createdUser = this.userRepo.create({
+      email: email,
+      name: name,
+      password: passwordHash,
+    });
+    return this.userRepo.save(createdUser);
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    const { name, email, password } = dto;
+    const user = await this.userRepo.findOne({ where: { id: id } });
+    if (!user) {
+      throw new BadRequestException(`User not found.`);
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      user.password = await this.hashPassword(password);
+    }
+
     return this.userRepo.save(user);
   }
 

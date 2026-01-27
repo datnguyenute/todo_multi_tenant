@@ -16,11 +16,9 @@ export function useWorkspace() {
       const response = await create(name);
 
       if (response && response.data) {
-        // Show message
         toast("Create workspace success");
-        // Reload workspace
       } else {
-        toast(response.message);
+        setError(response.message);
       }
     } catch {
       setError("Create new workspace failed!");
