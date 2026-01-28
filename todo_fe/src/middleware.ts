@@ -8,5 +8,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/workspaces", "/users"],
+  matcher: ["/workspaces", "/users", "/projects"],
 };

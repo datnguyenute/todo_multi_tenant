@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UserSheet } from "@/components/common/UserSheet";
+import { ProjectSheet } from "@/components/common/ProjectSheet";
 import { useConfirm } from "@/components/confirm.provider";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -11,23 +11,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useUserApi } from "@/lib/api/users";
-import { IUser } from "@/types/next-auth";
+import { useProjectApi } from "@/lib/api/projects";
+import { IProject } from "@/types/next-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MoreHorizontalIcon, Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-function UsersPage() {
-  const { list, remove } = useUserApi();
+function ProjectsPage() {
+  const { list, remove } = useProjectApi();
   const { data: session } = useSession();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<IUser | null>(null);
+  const [editingProject, setEditingProject] = useState<IProject | null>(null);
   const confirm = useConfirm();
   const queryClient = useQueryClient();
 
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
+  const { data: projects = [], isLoading } = useQuery({
+    queryKey: ["projects"],
     queryFn: async () => {
       const res = await list();
       return res.data ?? [];
@@ -36,28 +36,28 @@ function UsersPage() {
   });
 
   const openCreate = () => {
-    setEditingUser(null);
+    setEditingProject(null);
     setSheetOpen(true);
   };
 
-  const openEdit = (user: IUser) => {
-    setEditingUser(user);
+  const openEdit = (project: IProject) => {
+    setEditingProject(project);
     setSheetOpen(true);
   };
 
-  const { mutate: deleteUser, isPending: isDeleting } = useMutation({
+  const { mutate: deleteProject, isPending: isDeleting } = useMutation({
     mutationFn: (id: string) => remove(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 
-  const handleDelete = async (user: IUser) => {
+  const handleDelete = async (project: IProject) => {
     const ok = await confirm({
-      title: "Delete user",
+      title: "Delete project",
       description: (
         <>
-          Are you sure you want to delete <span className="font-semibold">{user.name}</span>? This action cannot be
+          Are you sure you want to delete <span className="font-semibold">{project.name}</span>? This action cannot be
           undone.
         </>
       ),
@@ -67,7 +67,7 @@ function UsersPage() {
 
     if (!ok) return;
 
-    deleteUser(user.id);
+    deleteProject(project.id);
   };
 
   return (
@@ -75,10 +75,10 @@ function UsersPage() {
       <div className="px-4 lg:px-6 text-right">
         <Button size="sm" type="button" variant="outline" onClick={openCreate}>
           <Plus />
-          <span>Create new user</span>
+          <span>Create new project</span>
         </Button>
       </div>
-      <UserSheet open={sheetOpen} user={editingUser} onOpenChange={setSheetOpen} />
+      <ProjectSheet open={sheetOpen} project={editingProject} onOpenChange={setSheetOpen} />
       <div className="px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           {isLoading && <p>Loading...</p>}
@@ -86,19 +86,15 @@ function UsersPage() {
             <TableHeader className="bg-muted">
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Type</TableHead>
                 <TableHead>Updated At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user: IUser) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.type}</TableCell>
-                  <TableCell>{user.updatedAt}</TableCell>
+              {projects.map((project: IProject) => (
+                <TableRow key={project.id}>
+                  <TableCell className="font-medium">{project.name}</TableCell>
+                  <TableCell>{project.updatedAt}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -108,11 +104,11 @@ function UsersPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openEdit(user)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openEdit(project)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           variant="destructive"
-                          onClick={() => handleDelete(user)}
+                          onClick={() => handleDelete(project)}
                           disabled={isDeleting}
                         >
                           Delete
@@ -130,7 +126,7 @@ function UsersPage() {
   );
 }
 
-UsersPage.getLayout = (page: React.ReactNode) => <DashboardLayout pageName="Users">{page}</DashboardLayout>;
-UsersPage.requireAuth = true;
+ProjectsPage.getLayout = (page: React.ReactNode) => <DashboardLayout pageName="Projects">{page}</DashboardLayout>;
+ProjectsPage.requireAuth = true;
 
-export default UsersPage;
+export default ProjectsPage;

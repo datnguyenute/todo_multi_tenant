@@ -28,3 +28,9 @@ interface IUser {
   type?: string;
   updatedAt?: string;
 }
+
+interface IProject {
+  id: string;
+  name: string;
+  updatedAt?: string;
+}
