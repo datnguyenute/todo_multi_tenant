@@ -9,7 +9,6 @@ export class WorkspacesController {
 
   @Get()
   @ResponseMessage('List workspaces')
-  
   list() {
     return this.workspacesService.findAll();
   }

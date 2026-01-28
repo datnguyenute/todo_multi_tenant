@@ -25,7 +25,7 @@ export function useUserApi() {
         body: { name, email, password },
       });
     },
-    edit: (id: number, name: string, email: string, password: string) => {
+    edit: (id: string, name: string, email: string, password: string) => {
       return sendRequest<IBackendRes<IUser[]>>({
         method: "PATCH",
         url: "/users/" + id,
@@ -33,6 +33,15 @@ export function useUserApi() {
           Authorization: `Bearer ${session?.access_token}`,
         },
         body: { name, email, password },
+      });
+    },
+    remove: (id: string) => {
+      return sendRequest<IBackendRes<null>>({
+        method: "DELETE",
+        url: "/users/" + id,
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
       });
     },
   };

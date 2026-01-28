@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserSheet } from "@/components/common/UserSheet";
+import { useConfirm } from "@/components/confirm.provider";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,16 +13,19 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useUserApi } from "@/lib/api/users";
 import { IUser } from "@/types/next-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MoreHorizontalIcon, Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 function UsersPage() {
-  const { list } = useUserApi();
+  const { list, remove } = useUserApi();
   const { data: session } = useSession();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<IUser | null>(null);
+  const [deleteUserTarget, setDeleteUserTarget] = useState<IUser | null>(null);
+  const confirm = useConfirm();
+  const queryClient = useQueryClient();
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
@@ -38,9 +42,34 @@ function UsersPage() {
   };
 
   const openEdit = (user: IUser) => {
-    console.log('openEdit: ', user);
     setEditingUser(user);
     setSheetOpen(true);
+  };
+
+  const { mutate: deleteUser, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setDeleteUserTarget(null);
+    },
+  });
+
+  const handleDelete = async (user: IUser) => {
+    const ok = await confirm({
+      title: "Delete user",
+      description: (
+        <>
+          Are you sure you want to delete <span className="font-semibold">{user.name}</span>? This action cannot be
+          undone.
+        </>
+      ),
+      confirmText: "Delete",
+      destructive: true,
+    });
+
+    if (!ok) return;
+
+    deleteUser(user.id);
   };
 
   return (
@@ -51,7 +80,7 @@ function UsersPage() {
           <span>Create new user</span>
         </Button>
       </div>
-      <UserSheet open={sheetOpen} user={editingUser} onOpenChange={setSheetOpen}/>
+      <UserSheet open={sheetOpen} user={editingUser} onOpenChange={setSheetOpen} />
       <div className="px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <Table>
@@ -83,7 +112,13 @@ function UsersPage() {
                         <DropdownMenuItem onClick={() => openEdit(user)}>Edit</DropdownMenuItem>
                         <DropdownMenuItem>Duplicate</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={() => handleDelete(user)}
+                          disabled={isDeleting}
+                        >
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

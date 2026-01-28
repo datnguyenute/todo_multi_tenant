@@ -1,4 +1,5 @@
 import AppProviders from "@/components/app.providers";
+import { ConfirmProvider } from "@/components/confirm.provider";
 import NextAuthWrapper from "@/components/next.auth.wrapper";
 import "@/styles/globals.css";
 import { NextPage } from "next";
@@ -14,19 +15,19 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-
-
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page) => page)
-  const page = getLayout(<Component {...pageProps} />)
+  const getLayout = Component.getLayout ?? ((page) => page);
+  const page = getLayout(<Component {...pageProps} />);
 
   return (
     <AppProviders>
       {Component.requireAuth ? (
-        <NextAuthWrapper>{page}</NextAuthWrapper>
+        <NextAuthWrapper>
+          <ConfirmProvider>{page}</ConfirmProvider>
+        </NextAuthWrapper>
       ) : (
         page
       )}
     </AppProviders>
-  )
+  );
 }

@@ -89,6 +89,16 @@ export class UsersService {
     return this.userRepo.save(user);
   }
 
+  async delete(id: string) {
+    const result = await this.userRepo.softDelete(id);
+
+    if (!result.affected) {
+      throw new BadRequestException(`User not found.`);
+    }
+
+    return true;
+  }
+
   findUserByToken = async (refreshToken: string) => {
     return await this.userRepo.findOne({ where: { refreshToken: refreshToken } });
   };
