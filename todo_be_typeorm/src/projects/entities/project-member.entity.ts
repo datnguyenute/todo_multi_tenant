@@ -25,7 +25,7 @@ export class ProjectMember {
     enum: ProjectRole,
     default: ProjectRole.MEMBER,
   })
-  role: ProjectRole;
+  role: ProjectRole; // TODO: Admin page
 
   @ManyToOne(() => User, (user) => user.workspaces, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

@@ -31,7 +31,7 @@ export class UserWorkspace {
     enum: WorkspaceRole,
     default: WorkspaceRole.MEMBER,
   })
-  role: WorkspaceRole
+  role: WorkspaceRole  // TODO: Admin page
 
   @Column({
     type: "enum",
