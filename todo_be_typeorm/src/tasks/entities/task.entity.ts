@@ -43,8 +43,8 @@ export class Task {
   @Column({ default: 'pending' })
   status: string; // TODO: Admin page
 
-  @Column({ type: 'bytea' })
-  attachment: Buffer;
+  @Column({ type: 'bytea', nullable: true })
+  attachment: Buffer | null;
 
   @ManyToOne(() => Project, (project) => project.tasks, { onDelete: 'CASCADE' })
   project: Project;

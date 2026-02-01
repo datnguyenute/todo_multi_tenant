@@ -11,11 +11,17 @@ export class TasksService {
     private readonly taskRepo: Repository<Task>,
   ) {}
 
-  async create(createTaskDto: CreateTaskDto, fileBuffer?: Buffer): Promise<Task> {
+  async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const { projectId, assigneeId, ...taskData } = createTaskDto;
+
+    let buffer: Buffer | null = null;
+    if (createTaskDto.fileBase64) {
+      buffer = Buffer.from(createTaskDto.fileBase64, 'base64');
+    }
+
     const task = this.taskRepo.create({
       ...taskData,
-      attachment: fileBuffer,
+      attachment: buffer,
       project: { id: projectId },
       assignee: { id: assigneeId },
     });
@@ -38,11 +44,17 @@ export class TasksService {
     });
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto, fileBuffer?: Buffer): Promise<Task> {
+  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    let attachmentUpdate = {};
+
+    if (updateTaskDto.fileBase64) {
+      attachmentUpdate = { attachment: Buffer.from(updateTaskDto.fileBase64, 'base64') };
+    }
+
     const task = await this.taskRepo.preload({
       id: id,
       ...updateTaskDto,
-      ...(fileBuffer && { attachment: fileBuffer }),
+      ...attachmentUpdate,
     });
 
     if (!task) throw new NotFoundException(`Task with ID ${id} not found`);

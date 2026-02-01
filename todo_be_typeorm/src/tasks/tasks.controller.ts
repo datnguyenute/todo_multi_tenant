@@ -23,8 +23,8 @@ export class TasksController {
   @Post()
   @ResponseMessage('Create task')
   @UseInterceptors(FileInterceptor('file')) // Matches the key in form-data
-  async create(@Body() createTaskDto: CreateTaskDto, @UploadedFile() file?: Express.Multer.File) {
-    return await this.taskService.create(createTaskDto, file?.buffer);
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    return await this.taskService.create(createTaskDto);
   }
 
   @Get('project/:projectId')
@@ -42,12 +42,8 @@ export class TasksController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file')) // Matches the key in form-data
   @ResponseMessage('Edit task')
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateTaskDto: UpdateTaskDto,
-    @UploadedFile() file?: Express.Multer.File,
-  ) {
-    return await this.taskService.update(id, updateTaskDto, file?.buffer);
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTaskDto: UpdateTaskDto) {
+    return await this.taskService.update(id, updateTaskDto);
   }
 
   @Delete(':id')

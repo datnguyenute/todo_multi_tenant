@@ -29,8 +29,3 @@ interface IUser {
   updatedAt?: string;
 }
 
-interface IProject {
-  id: string;
-  name: string;
-  updatedAt?: string;
-}

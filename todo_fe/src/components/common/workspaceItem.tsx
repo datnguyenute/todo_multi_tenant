@@ -1,11 +1,14 @@
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/router";
 
 interface IWorkspaceItemProps {
+  id: string;
   name: string;
 }
 export function WorkspaceItem(props: IWorkspaceItemProps) {
+  const router = useRouter();
   return (
-    <Card>
+    <Card style={{ cursor: "pointer" }} onClick={() => router.push(`/workspaces/${props.id}`)}>
       <CardHeader>
         <CardDescription>Total Revenue</CardDescription>
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">{props.name}</CardTitle>

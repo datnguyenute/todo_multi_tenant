@@ -25,4 +25,8 @@ export class CreateTaskDto {
   @IsOptional()
   @IsEnum(['pending', 'in-progress', 'completed'])
   status?: string;
+
+  @IsString()
+  @IsOptional()
+  fileBase64?: string;
 }

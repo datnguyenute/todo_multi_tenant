@@ -23,5 +23,23 @@ declare global {
   interface IWorkspace {
     id: string;
     name: string;
+    members: IUser[];
+  }
+
+  interface IProject {
+    id: string;
+    name: string;
+    updatedAt?: string;
+  }
+
+  interface ITask {
+    id: string;
+    title: string;
+    description: string;
+    projectId: string;
+    assigneeid: string;
+    fileBase64: string;
+    updatedAt?: string;
+    project?: IProject;
   }
 }

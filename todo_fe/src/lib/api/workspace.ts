@@ -14,6 +14,15 @@ export function useWorkspaceApi() {
         },
       });
     },
+    detail: (id: string) => {
+      return sendRequest<IBackendRes<IWorkspace>>({
+        method: "GET",
+        url: `/workspaces/${id}`,
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+    },
     create: (name: string) => {
       return sendRequest<IBackendRes<IWorkspace>>({
         method: "POST",
@@ -22,6 +31,16 @@ export function useWorkspaceApi() {
           Authorization: `Bearer ${session?.access_token}`,
         },
         body: { name, ownerId: session?.user.id },
+      });
+    },
+    addMembers: (id: string, userIds: string[]) => {
+      return sendRequest<IBackendRes<IWorkspace>>({
+        method: "POST",
+        url: `/workspaces/${id}/users/batch`,
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: { id, userIds },
       });
     },
   };
